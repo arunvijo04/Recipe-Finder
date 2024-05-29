@@ -1,0 +1,64 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipe Finder</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Recipe Finder</h1>
+    <input type="text" id="ingredientInput" placeholder="Enter ingredients...">
+    <button onclick="searchRecipes()">Search</button>
+    <div id="recipeResults"></div>
+</div>
+
+<script>
+    // Function to search for recipes based on ingredients
+    function searchRecipes() {
+        const ingredientInput = document.getElementById('ingredientInput').value;
+        const apiKey = 'fc54b332ee924c978d356edc6d06e7ef'; // Replace with your Spoonacular API key
+        const apiUrl = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientInput}&apiKey=${apiKey}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                displayRecipes(data);
+            })
+            .catch(error => console.log('Error:', error));
+    }
+
+    // Function to display search results
+    function displayRecipes(recipes) {
+        const recipeResults = document.getElementById('recipeResults');
+        recipeResults.innerHTML = '';
+
+        recipes.forEach(recipe => {
+            const recipeCard = `
+                <div class="recipe-card">
+                    <img src="${recipe.image}" alt="${recipe.title}">
+                    <h2>${recipe.title}</h2>
+                    <p>Missing Ingredients: ${recipe.missedIngredients.length}</p>
+                    <button onclick="getRecipeDetails(${recipe.id})">View Recipe</button>
+                </div>
+            `;
+            recipeResults.innerHTML += recipeCard;
+        });
+    }
+
+    // Function to get detailed information about a recipe
+    function getRecipeDetails(recipeId) {
+        const apiKey = 'fc54b332ee924c978d356edc6d06e7ef'; // Replace with your Spoonacular API key
+        const apiUrl = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${apiKey}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Display detailed recipe information (e.g., ingredients, instructions)
+                console.log(data);
+            })
+            .catch(error => console.log('Error:', error));
+    }
+</script>
+</body>
+</html>
